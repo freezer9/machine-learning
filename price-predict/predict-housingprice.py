@@ -53,10 +53,10 @@ def SplitToTrainAndTest(FtrainingListSize,FtestingListSize,FtrainingListPrice,Ft
 
 #def AdjustDataToEqual(x,y):
 	# To plot the data on the scatter plot they should be equal
-	gap = max(x,y) - min(x,y)
-	for x in range(gap):
-		y.append(0)
-	print(x,y)
+#	gap = max(x,y) - min(x,y)
+#	for x in range(gap):
+#		y.append(0)
+#	print(x,y)
 
 
 def main():
