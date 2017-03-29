@@ -51,14 +51,39 @@ def SplitToTrainAndTest(FtrainingListSize,FtestingListSize,FtrainingListPrice,Ft
 					FtestingListPrice.append(float(REdata[1][x]))
 			print("Splited House price data into T&T")
 
+def Equalize2Lists(xs,ys):
+	# Equalizes the list if either of the list is smaller than the other
+	#  Takes 2 normal lists and returns 2 lists
+	gap = 0
+	if len(xs) > len(ys):
+		gap = len(xs) - len(ys)
+		for y in range(gap):
+			ys.append(0)
+	elif len(ys) > len(xs):
+		gap = len(ys) - len(xs)
+		for x in range(gap):
+			xs.append(0)
+	return xs,ys
+
+
+
+def BestFitLine(xs,ys):
+	slope = ( (mean(xs)*mean(ys))-(mean(xs*ys)) ) / (pow(mean(xs),2) - mean(pow(xs,2)))
+	return slope
+
+def InterceptOfTheLine(xs,ys,m):
+	b = mean(ys) - m*mean(xs)
+	return b
+
 
 def main():
 	CSVFileData= LoadCSVData('RealEstate.csv') # the housing data is returned as a list of 2 items
 	SplitToTrainAndTest(trainingListSize,testingListSize,trainingListPrice,testingListPrice,CSVFileData,splitRatio = 0.76)
-
+	# equalize the list
+	trainingSetEqSize,trainingSetEqPrice = Equalize2Lists(trainingListSize,trainingListPrice)
 	# the data points in np array
-	xsTrain = np.array(trainingListSize,dtype=np.float64) 
-	ysTrain = np.array(trainingListPrice,dtype=np.float64)
+	xsTrain = np.array(trainingSetEqSize,dtype=np.float64) 
+	ysTrain = np.array(trainingSetEqPrice,dtype=np.float64)
 	xsTest = np.array(testingListSize,dtype=np.float64)
 	ysTest = np.array(testingListPrice,dtype=np.float64)
 
@@ -66,10 +91,21 @@ def main():
 	print("SizeHouse Testing Data : {0}".format(len(testingListSize)))
 	print("Price Training Data: {0}".format(len(trainingListPrice)))
 	print("Price Testing Data : {0}".format(len(testingListPrice)))
-	#print(len(xsTrain))
-	#print(len(ysTrain))
-	#adjVal = AdjustDataToEqual(len(xsTrain),len(ysTrain),xsTrain,ysTrain)
-	plt.scatter(CSVFileData[0],CSVFileData[1])
+
+	slopeM = BestFitLine(xsTrain,ysTrain)
+	InterceptB = InterceptOfTheLine(xsTrain,ysTrain,slopeM)
+	reg_line = [(slopeM*x)+InterceptB for x in xsTrain]
+	print("Slope of training data :",slopeM)
+	print("Intercept of training data :",InterceptB)
+
+	#plot the data
+	PlotColors = [[0.35,0.21,0.54],[0.225,0.45,0.55]]
+	fig = plt.figure()
+	fig.patch.set_facecolor('MidnightBlue')
+	plt.scatter(xsTrain,ysTrain,s = 50,c = PlotColors,alpha = 0.5)
+	plt.plot(xsTrain,reg_line,color = 'm')
+	plt.xlabel('Size in sqft',color='w')
+	plt.ylabel('Price in 1000s',color = 'w')
 	plt.show()
 
 
