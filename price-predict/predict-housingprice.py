@@ -19,7 +19,6 @@ testingListSize = []   #----> x
 testingListPrice = []  #----> y
 
 
-
 def LoadCSVData(filename):
 	#  loads the csv data into lists and returns a list
 	SizeInft = []
@@ -97,12 +96,16 @@ def main():
 	reg_line = [(slopeM*x)+InterceptB for x in xsTrain]
 	print("Slope of training data :",slopeM)
 	print("Intercept of training data :",InterceptB)
-
+	predx = 256
+	predict_y = (slopeM*predx) + InterceptB
+	print("\n\n\n>> Predicted Price for {0}sqft is ${1}\n\n\n".format(predx,predict_y*1000))
 	#plot the data
 	PlotColors = [[0.35,0.21,0.54],[0.225,0.45,0.55]]
 	fig = plt.figure()
 	fig.patch.set_facecolor('MidnightBlue')
 	plt.scatter(xsTrain,ysTrain,s = 50,c = PlotColors,alpha = 0.5)
+	# plot the predicted value 
+	plt.scatter(predx,predict_y,s = 50,color='r',alpha = 1)
 	plt.plot(xsTrain,reg_line,color = 'm')
 	plt.xlabel('Size in sqft',color='w')
 	plt.ylabel('Price in 1000s',color = 'w')
